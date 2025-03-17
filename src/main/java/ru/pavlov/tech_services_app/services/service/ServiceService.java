@@ -42,6 +42,6 @@ public class ServiceService {
     public List<ServiceResponseDto> getServices() {
         return serviceRepository.findAll().stream()
                 .map(serviceMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

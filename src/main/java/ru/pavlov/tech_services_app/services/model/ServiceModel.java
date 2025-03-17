@@ -6,8 +6,6 @@ import ru.pavlov.tech_services_app.services.constants.ServiceType;
 
 @Data
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "services", schema = "public")
 public class ServiceModel {
     @Id
