@@ -1,14 +1,14 @@
 package ru.pavlov.tech_services_app.services.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.pavlov.tech_services_app.services.constants.ServiceType;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "service")
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "services", schema = "public")
 public class ServiceModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

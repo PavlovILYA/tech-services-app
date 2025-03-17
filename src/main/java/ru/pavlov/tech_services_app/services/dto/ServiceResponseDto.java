@@ -5,7 +5,7 @@ import ru.pavlov.tech_services_app.services.constants.ServiceType;
 
 public record ServiceResponseDto(
         @NotNull
-        @PositiveOrZero
+        @Positive
         Long id,
 
         @NotNull
