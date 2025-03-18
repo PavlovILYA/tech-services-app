@@ -3,11 +3,10 @@ package ru.pavlov.tech_services_app.services.model;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.pavlov.tech_services_app.services.constants.ServiceType;
+import ru.pavlov.tech_services_app.users.model.User;
 
 @Data
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "services", schema = "public")
 public class ServiceModel {
     @Id
@@ -27,4 +26,8 @@ public class ServiceModel {
 
     @Column(name = "price")
     private Double price;
+
+    @ManyToOne
+    @JoinColumn(name = "provider_id", nullable = false)
+    private User provider;
 }

@@ -9,9 +9,9 @@ import ru.pavlov.tech_services_app.services.dto.UpdateServiceRequestDto;
 import ru.pavlov.tech_services_app.services.mapper.ServiceMapper;
 import ru.pavlov.tech_services_app.services.model.ServiceModel;
 import ru.pavlov.tech_services_app.services.repository.ServiceRepository;
+import ru.pavlov.tech_services_app.users.repository.UserRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -20,15 +20,19 @@ public class ServiceService {
 
     private final ServiceRepository serviceRepository;
     private final ServiceMapper serviceMapper;
+    private final UserRepository userRepository;
 
-    public ServiceResponseDto createService(CreateServiceRequestDto createServiceDto) {
-        ServiceModel service = serviceMapper.toModel(createServiceDto);
+    public ServiceResponseDto createService(Long userId, CreateServiceRequestDto createServiceDto) {
+        ServiceModel service = serviceMapper.toEntity(createServiceDto, userRepository.findById(userId).get());
         service = serviceRepository.save(service);
         return serviceMapper.toDto(service);
     }
 
-    public ServiceResponseDto updateService(Long id, UpdateServiceRequestDto updateServiceDto) {
+    public ServiceResponseDto updateService(Long userId, Long id, UpdateServiceRequestDto updateServiceDto) {
         ServiceModel service = serviceRepository.findById(id).get();
+        if (!service.getProvider().getId().equals(userId)) {
+            throw new RuntimeException("403");
+        }
         serviceMapper.updateServiceFromDto(updateServiceDto, service);
         service = serviceRepository.save(service);
         return serviceMapper.toDto(service);
@@ -42,6 +46,8 @@ public class ServiceService {
     public List<ServiceResponseDto> getServices() {
         return serviceRepository.findAll().stream()
                 .map(serviceMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
+
+
 }
