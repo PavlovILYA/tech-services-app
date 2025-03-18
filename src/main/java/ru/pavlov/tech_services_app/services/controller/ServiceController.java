@@ -12,6 +12,7 @@ import ru.pavlov.tech_services_app.services.dto.CreateServiceRequestDto;
 import ru.pavlov.tech_services_app.services.dto.ServiceResponseDto;
 import ru.pavlov.tech_services_app.services.dto.UpdateServiceRequestDto;
 import ru.pavlov.tech_services_app.services.service.ServiceService;
+import ru.pavlov.tech_services_app.users.constants.Users;
 
 import java.util.List;
 
@@ -25,14 +26,16 @@ public class ServiceController {
     private final ServiceService serviceService;
 
     @PostMapping
-    public ResponseEntity<ServiceResponseDto> createService(@Valid @RequestBody CreateServiceRequestDto createServiceDto) {
-        return new ResponseEntity<>(serviceService.createService(createServiceDto), HttpStatus.CREATED);
+    public ResponseEntity<ServiceResponseDto> createService(@RequestHeader(Users.USER_ID_HEADER) @Positive Long userId,
+                                                            @Valid @RequestBody CreateServiceRequestDto createServiceDto) {
+        return new ResponseEntity<>(serviceService.createService(userId, createServiceDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ServiceResponseDto updateService(@PathVariable @Positive Long id,
+    public ServiceResponseDto updateService(@RequestHeader(Users.USER_ID_HEADER) @Positive Long userId,
+                                            @PathVariable @Positive Long id,
                                             @Valid @RequestBody UpdateServiceRequestDto updateServiceDto) {
-        return serviceService.updateService(id, updateServiceDto);
+        return serviceService.updateService(userId, id, updateServiceDto);
     }
 
     @GetMapping("/{id}")

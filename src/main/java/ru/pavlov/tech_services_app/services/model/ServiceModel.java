@@ -3,6 +3,7 @@ package ru.pavlov.tech_services_app.services.model;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.pavlov.tech_services_app.services.constants.ServiceType;
+import ru.pavlov.tech_services_app.users.model.User;
 
 @Data
 @Entity
@@ -25,4 +26,8 @@ public class ServiceModel {
 
     @Column(name = "price")
     private Double price;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User provider;
 }
