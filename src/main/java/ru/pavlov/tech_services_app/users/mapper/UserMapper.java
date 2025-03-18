@@ -9,5 +9,5 @@ import ru.pavlov.tech_services_app.users.model.User;
 public interface UserMapper {
     UserResponseDto toDto(User user);
 
-    User toModel(CreateUserRequestDto createUserRequestDto);
+    User toEntity(CreateUserRequestDto createUserRequestDto);
 }

@@ -23,7 +23,7 @@ public class ServiceService {
     private final UserRepository userRepository;
 
     public ServiceResponseDto createService(Long userId, CreateServiceRequestDto createServiceDto) {
-        ServiceModel service = serviceMapper.toModel(createServiceDto, userRepository.findById(userId).get());
+        ServiceModel service = serviceMapper.toEntity(createServiceDto, userRepository.findById(userId).get());
         service = serviceRepository.save(service);
         return serviceMapper.toDto(service);
     }

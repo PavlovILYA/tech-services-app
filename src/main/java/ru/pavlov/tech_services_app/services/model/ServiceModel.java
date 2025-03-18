@@ -28,6 +28,6 @@ public class ServiceModel {
     private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "provider_id", nullable = false)
     private User provider;
 }

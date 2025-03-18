@@ -20,7 +20,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     public UserResponseDto createUser(CreateUserRequestDto createUserRequestDto) {
-        User user = userMapper.toModel(createUserRequestDto);
+        User user = userMapper.toEntity(createUserRequestDto);
         user = userRepository.save(user);
         return userMapper.toDto(user);
     }

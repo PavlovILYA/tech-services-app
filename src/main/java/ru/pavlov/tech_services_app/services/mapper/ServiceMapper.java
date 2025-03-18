@@ -15,7 +15,7 @@ public interface ServiceMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "createServiceRequestDto.name")
     @Mapping(target = "type", source = "createServiceRequestDto.type")
-    ServiceModel toModel(CreateServiceRequestDto createServiceRequestDto, User user);
+    ServiceModel toEntity(CreateServiceRequestDto createServiceRequestDto, User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateServiceFromDto(UpdateServiceRequestDto dto, @MappingTarget ServiceModel entity);
