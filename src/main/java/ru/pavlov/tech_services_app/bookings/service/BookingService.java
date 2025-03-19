@@ -5,11 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.pavlov.tech_services_app.bookings.dto.BookingResponseDto;
 import ru.pavlov.tech_services_app.bookings.dto.UpdateBookingRequestDto;
+import ru.pavlov.tech_services_app.bookings.exception.BookingAccessException;
+import ru.pavlov.tech_services_app.bookings.exception.BookingNotFoundException;
 import ru.pavlov.tech_services_app.bookings.mapper.BookingMapper;
 import ru.pavlov.tech_services_app.bookings.model.Booking;
 import ru.pavlov.tech_services_app.bookings.repository.BookingRepository;
+import ru.pavlov.tech_services_app.services.exception.ServiceNotFoundException;
 import ru.pavlov.tech_services_app.services.model.ServiceModel;
 import ru.pavlov.tech_services_app.services.repository.ServiceRepository;
+import ru.pavlov.tech_services_app.users.exception.UserNotFoundException;
 import ru.pavlov.tech_services_app.users.model.User;
 import ru.pavlov.tech_services_app.users.repository.UserRepository;
 
@@ -27,8 +31,9 @@ public class BookingService {
     private final ServiceRepository serviceRepository;
 
     public BookingResponseDto createBooking(Long userId, Long serviceId, LocalDateTime time, String comment) {
-        User user = userRepository.findById(userId).get();
-        ServiceModel service = serviceRepository.findById(serviceId).get();
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        ServiceModel service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new ServiceNotFoundException(serviceId));
         if (user.getId().equals(service.getProvider().getId())) {
             throw new RuntimeException("cannot book own service");
         }
@@ -67,15 +72,15 @@ public class BookingService {
     }
 
     private Booking getMyBookingModel(Long userId, Long id) {
-        User user = userRepository.findById(userId).get();
-        Booking booking = bookingRepository.findById(id).get();
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new BookingNotFoundException(id));
         checkAccess(user, booking);
         return booking;
     }
 
     private void checkAccess(User user, Booking booking) {
         if (!user.getId().equals(booking.getCustomer().getId())) {
-            throw new RuntimeException("403");
+            throw new BookingAccessException(user.getId(), booking.getId());
         }
     }
 }

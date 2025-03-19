@@ -6,9 +6,12 @@ import org.springframework.stereotype.Service;
 import ru.pavlov.tech_services_app.services.dto.CreateServiceRequestDto;
 import ru.pavlov.tech_services_app.services.dto.ServiceResponseDto;
 import ru.pavlov.tech_services_app.services.dto.UpdateServiceRequestDto;
+import ru.pavlov.tech_services_app.services.exception.ServiceAccessException;
+import ru.pavlov.tech_services_app.services.exception.ServiceNotFoundException;
 import ru.pavlov.tech_services_app.services.mapper.ServiceMapper;
 import ru.pavlov.tech_services_app.services.model.ServiceModel;
 import ru.pavlov.tech_services_app.services.repository.ServiceRepository;
+import ru.pavlov.tech_services_app.users.exception.UserNotFoundException;
 import ru.pavlov.tech_services_app.users.repository.UserRepository;
 
 import java.util.List;
@@ -23,15 +26,16 @@ public class ServiceService {
     private final UserRepository userRepository;
 
     public ServiceResponseDto createService(Long userId, CreateServiceRequestDto createServiceDto) {
-        ServiceModel service = serviceMapper.toEntity(createServiceDto, userRepository.findById(userId).get());
+        ServiceModel service = serviceMapper.toEntity(createServiceDto,
+                userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId)));
         service = serviceRepository.save(service);
         return serviceMapper.toDto(service);
     }
 
     public ServiceResponseDto updateService(Long userId, Long id, UpdateServiceRequestDto updateServiceDto) {
-        ServiceModel service = serviceRepository.findById(id).get();
+        ServiceModel service = serviceRepository.findById(id).orElseThrow(() -> new ServiceNotFoundException(id));
         if (!service.getProvider().getId().equals(userId)) {
-            throw new RuntimeException("403");
+            throw new ServiceAccessException(userId, id);
         }
         serviceMapper.updateServiceFromDto(updateServiceDto, service);
         service = serviceRepository.save(service);
@@ -39,7 +43,7 @@ public class ServiceService {
     }
 
     public ServiceResponseDto getService(Long id) {
-        ServiceModel service = serviceRepository.findById(id).get();
+        ServiceModel service = serviceRepository.findById(id).orElseThrow(() -> new ServiceNotFoundException(id));
         return serviceMapper.toDto(service);
     }
 
