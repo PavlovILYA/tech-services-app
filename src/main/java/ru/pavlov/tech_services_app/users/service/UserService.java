@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.pavlov.tech_services_app.users.dto.CreateUserRequestDto;
 import ru.pavlov.tech_services_app.users.dto.UserResponseDto;
+import ru.pavlov.tech_services_app.users.exception.UserNotFoundException;
 import ru.pavlov.tech_services_app.users.mapper.UserMapper;
 import ru.pavlov.tech_services_app.users.model.User;
 import ru.pavlov.tech_services_app.users.repository.UserRepository;
@@ -26,7 +27,7 @@ public class UserService {
     }
 
     public UserResponseDto getUser(Long id) {
-        User user = userRepository.findById(id).get();
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return userMapper.toDto(user);
     }
 
